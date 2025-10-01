@@ -13,13 +13,13 @@
 
 ### Color Palette
 **Primary Colors:**
-- Brand Blue: 210 65% 45% (trustworthy, travel-friendly)
-- Deep Navy: 215 25% 15% (headers, primary text)
+- Soft Teal: 200 60% 50% (trustworthy, calming, travel-friendly)
+- Dark Gray: 220 15% 20% (headers, primary text)
 
 **Supporting Colors:**
-- Warm Orange: 25 85% 55% (accent for CTAs and highlights)
-- Soft Green: 140 35% 50% (success states, family-friendly activities)
-- Light backgrounds: 210 15% 98% (light mode), 215 20% 8% (dark mode)
+- Warm Coral: 25 75% 60% (accent for CTAs and highlights)
+- Soft Green: 140 40% 55% (success states, family-friendly activities)
+- Clean White backgrounds: 0 0% 100% (light mode), 220 20% 10% (dark mode)
 
 ### Typography
 **Font Stack:** Inter from Google Fonts
