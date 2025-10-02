@@ -16,7 +16,7 @@ export default function Hero({ currentWorkflow, onWorkflowChange }: HeroProps) {
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/10 to-primary/30" />
         <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
         {/* Placeholder for family travel imagery */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-orange-400/20 flex items-center justify-center">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
           <div className="text-center text-primary/30">
             <Globe className="h-32 w-32 mx-auto mb-4" />
             <p className="text-sm">Family Travel Background Image</p>
@@ -46,7 +46,7 @@ export default function Hero({ currentWorkflow, onWorkflowChange }: HeroProps) {
               size="lg" 
               variant={currentWorkflow === "inspiration" ? "default" : "outline"}
               onClick={() => onWorkflowChange("inspiration")}
-              className="w-full sm:w-auto text-lg px-8 py-4 backdrop-blur-md bg-background/80 border-2"
+              className="w-full sm:w-auto text-lg px-8 py-4"
               data-testid="button-hero-inspiration"
             >
               <MapPin className="h-5 w-5 mr-2" />
@@ -56,7 +56,7 @@ export default function Hero({ currentWorkflow, onWorkflowChange }: HeroProps) {
               size="lg" 
               variant={currentWorkflow === "itinerary" ? "default" : "outline"}
               onClick={() => onWorkflowChange("itinerary")}
-              className="w-full sm:w-auto text-lg px-8 py-4 backdrop-blur-md bg-background/80 border-2"
+              className="w-full sm:w-auto text-lg px-8 py-4"
               data-testid="button-hero-itinerary"
             >
               <Users className="h-5 w-5 mr-2" />
