@@ -6,6 +6,7 @@ import { fileURLToPath } from "url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
+  // Build the app that lives in /client
   root: path.resolve(__dirname, "client"),
   plugins: [react()],
   resolve: {
@@ -16,7 +17,7 @@ export default defineConfig({
     },
   },
   build: {
-    // 👇 Put the output inside client/dist
+    // Force the output to /client/dist (absolute path avoids ambiguity)
     outDir: path.resolve(__dirname, "client", "dist"),
     emptyOutDir: true,
   },
