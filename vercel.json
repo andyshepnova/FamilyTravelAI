@@ -3,5 +3,9 @@
   "installCommand": "npm install",
   "buildCommand": "npm run build:web",
   "outputDirectory": "client/dist",
-  "rootDirectory": "."
+  "functions": {
+    "client/api/**/*.ts": {
+      "runtime": "nodejs18.x"
+    }
+  }
 }
