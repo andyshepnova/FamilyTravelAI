@@ -18,138 +18,110 @@ export default function ItineraryWorkflow({ onCreateItinerary }: ItineraryWorkfl
     childAges: "",
     budget: "",
     interests: "",
-    email: ""
+    email: "",
   });
-  
+
   const [itinerary, setItinerary] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showRefinement, setShowRefinement] = useState(false);
   const [isSendingEmail, setIsSendingEmail] = useState(false);
 
+  /**
+   * Generate itinerary by calling the backend API
+   */
   const handleCreateItinerary = async () => {
+    if (!params.destination || !params.startDate || !params.endDate) {
+      alert("Please fill in the destination and travel dates before continuing.");
+      return;
+    }
+
     setIsLoading(true);
-    
-    // todo: remove mock functionality
-    setTimeout(() => {
-      const mockItinerary = [
+    setItinerary([]);
+
+    try {
+      const response = await fetch("/api/generate-itinerary", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          destination: params.destination,
+          startDate: params.startDate,
+          endDate: params.endDate,
+          childAges: params.childAges,
+          budget: params.budget,
+          interests: params.interests,
+        }),
+      });
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.error || "Failed to generate itinerary. Please try again.");
+      }
+
+      const data = await response.json();
+      const itineraryText = data.itinerary || data.message || "No itinerary was returned.";
+
+      // Display the AI-generated result as a single itinerary card
+      setItinerary([
         {
           dayNumber: 1,
-          date: "March 15, 2024",
-          theme: "Cultural Exploration",
-          totalWalkingTime: "2.5 hours",
+          theme: "AI-Generated Itinerary",
           activities: [
             {
-              id: "sagrada-familia",
-              name: "Sagrada Familia",
-              description: "Visit Gaudí's masterpiece with skip-the-line tickets",
-              duration: "2 hours",
-              ageRange: "6+ years",
-              location: "Eixample",
-              cost: "€26 per adult",
-              rating: 4.8,
-              category: "Cultural",
+              id: "ai-itinerary",
+              name: "Bespoke Family Plan",
+              description: itineraryText,
+              duration: "",
+              location: "",
+              cost: "",
+              rating: "",
+              category: "",
               linkStatus: "verified" as const,
-              bookingUrl: "https://example.com/sagrada",
-              timeSlot: "9:00 AM"
+              timeSlot: "",
             },
-            {
-              id: "lunch-tapas",
-              name: "Tapas Lunch",
-              description: "Family-friendly restaurant near the cathedral",
-              duration: "1 hour",
-              ageRange: "All ages",
-              location: "Gothic Quarter",
-              cost: "€45 for family",
-              rating: 4.5,
-              category: "Dining",
-              linkStatus: "verified" as const,
-              timeSlot: "12:30 PM"
-            },
-            {
-              id: "park-guell",
-              name: "Park Güell",
-              description: "Explore Gaudí's whimsical park with stunning city views",
-              duration: "2-3 hours",
-              ageRange: "All ages",
-              location: "Gràcia",
-              cost: "€15 per adult",
-              rating: 4.6,
-              category: "Cultural",
-              linkStatus: "verified" as const,
-              bookingUrl: "https://example.com/park-guell",
-              timeSlot: "3:00 PM"
-            }
-          ]
+          ],
         },
-        {
-          dayNumber: 2,
-          date: "March 16, 2024",
-          theme: "Beach & Relaxation",
-          totalWalkingTime: "1 hour",
-          activities: [
-            {
-              id: "barceloneta-beach",
-              name: "Barceloneta Beach",
-              description: "Family beach time with nearby cafes and playgrounds",
-              duration: "3 hours",
-              ageRange: "All ages",
-              location: "Barceloneta",
-              cost: "Free",
-              rating: 4.3,
-              category: "Outdoor",
-              linkStatus: "verified" as const,
-              timeSlot: "10:00 AM"
-            },
-            {
-              id: "aquarium",
-              name: "Barcelona Aquarium",
-              description: "One of Europe's largest aquariums with underwater tunnel",
-              duration: "2 hours",
-              ageRange: "All ages",
-              location: "Port Vell",
-              cost: "€22 per adult",
-              rating: 4.4,
-              category: "Entertainment",
-              linkStatus: "checking" as const,
-              bookingUrl: "https://example.com/aquarium",
-              timeSlot: "2:00 PM"
-            }
-          ]
-        }
-      ];
-      setItinerary(mockItinerary);
+      ]);
+    } catch (error: any) {
+      console.error("Error generating itinerary:", error);
+      alert(error.message || "Something went wrong while generating your itinerary.");
+    } finally {
       setIsLoading(false);
-    }, 3000);
+    }
+  };
+
+  /**
+   * Dummy refinement logic — placeholder for future AI improvements
+   */
+  const handleRefinement = async (feedback: string, quickOption?: string) => {
+    console.log("Refining itinerary with:", { feedback, quickOption });
+    // Future enhancement: send refinement feedback to AI
+  };
+
+  /**
+   * Dummy email sender (placeholder for backend integration)
+   */
+  const handleEmailItinerary = async () => {
+    if (!params.email) {
+      alert("Please provide an email address to send your itinerary.");
+      return;
+    }
+
+    setIsSendingEmail(true);
+    setTimeout(() => {
+      console.log("Email sent to:", params.email);
+      setIsSendingEmail(false);
+      alert("Your itinerary has been sent successfully!");
+    }, 2000);
   };
 
   const handleModifyActivity = (activityId: string) => {
-    console.log('Modify activity:', activityId);
+    console.log("Modify activity:", activityId);
     setShowRefinement(true);
   };
 
   const handleViewRoute = (dayNumber: number) => {
-    console.log('View route for day:', dayNumber);
-    // todo: integrate with Google Maps API
-  };
-
-  const handleRefinement = async (feedback: string, quickOption?: string) => {
-    console.log('Refining itinerary with:', { feedback, quickOption });
-    // todo: implement refinement logic
-  };
-
-  const handleEmailItinerary = async () => {
-    if (!params.email) {
-      alert('Please provide an email address');
-      return;
-    }
-    
-    setIsSendingEmail(true);
-    // todo: implement email sending
-    setTimeout(() => {
-      console.log('Email sent to:', params.email);
-      setIsSendingEmail(false);
-      alert('Itinerary sent successfully!');
-    }, 2000);
+    console.log("View route for day:", dayNumber);
+    // Future: integrate Google Maps API
   };
 
   return (
@@ -162,62 +134,58 @@ export default function ItineraryWorkflow({ onCreateItinerary }: ItineraryWorkfl
             <span>Plan Your Family Itinerary</span>
           </CardTitle>
         </CardHeader>
+
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <ParameterInput
               type="text"
               label="Destination"
               value={params.destination}
-              onChange={(value) => setParams(prev => ({ ...prev, destination: value }))}
+              onChange={(v) => setParams((p) => ({ ...p, destination: v }))}
               placeholder="Where are you going?"
               icon="location"
             />
-            
             <ParameterInput
               type="date"
               label="Start Date"
               value={params.startDate}
-              onChange={(value) => setParams(prev => ({ ...prev, startDate: value }))}
+              onChange={(v) => setParams((p) => ({ ...p, startDate: v }))}
               icon="calendar"
             />
-            
             <ParameterInput
               type="date"
               label="End Date"
               value={params.endDate}
-              onChange={(value) => setParams(prev => ({ ...prev, endDate: value }))}
+              onChange={(v) => setParams((p) => ({ ...p, endDate: v }))}
               icon="calendar"
             />
-            
             <ParameterInput
               type="text"
-              label="Children's Ages"
+              label="Children’s Ages"
               value={params.childAges}
-              onChange={(value) => setParams(prev => ({ ...prev, childAges: value }))}
-              placeholder="e.g., 5, 8, 12"
+              onChange={(v) => setParams((p) => ({ ...p, childAges: v }))}
+              placeholder="e.g., 3, 7, 10"
               icon="users"
             />
-            
             <ParameterInput
               type="text"
               label="Daily Budget"
               value={params.budget}
-              onChange={(value) => setParams(prev => ({ ...prev, budget: value }))}
+              onChange={(v) => setParams((p) => ({ ...p, budget: v }))}
               placeholder="Budget per day"
               icon="budget"
             />
-            
             <ParameterInput
               type="text"
               label="Interests & Preferences"
               value={params.interests}
-              onChange={(value) => setParams(prev => ({ ...prev, interests: value }))}
-              placeholder="What do you enjoy?"
+              onChange={(v) => setParams((p) => ({ ...p, interests: v }))}
+              placeholder="Museums, beaches, soft play..."
             />
           </div>
-          
+
           <div className="mt-6">
-            <Button 
+            <Button
               onClick={handleCreateItinerary}
               disabled={isLoading || !params.destination}
               className="w-full md:w-auto"
@@ -239,7 +207,7 @@ export default function ItineraryWorkflow({ onCreateItinerary }: ItineraryWorkfl
         </CardContent>
       </Card>
 
-      {/* Itinerary Results */}
+      {/* Itinerary Display */}
       {itinerary.length > 0 && (
         <div className="space-y-6">
           <div className="flex items-center justify-between flex-wrap gap-4">
@@ -249,19 +217,19 @@ export default function ItineraryWorkflow({ onCreateItinerary }: ItineraryWorkfl
                 type="text"
                 label="Email Address"
                 value={params.email}
-                onChange={(value) => setParams(prev => ({ ...prev, email: value }))}
+                onChange={(v) => setParams((p) => ({ ...p, email: v }))}
                 placeholder="Enter email to send itinerary"
                 className="w-64"
               />
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => setShowRefinement(true)}
                 data-testid="button-refine-itinerary"
               >
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Refine
               </Button>
-              <Button 
+              <Button
                 onClick={handleEmailItinerary}
                 disabled={isSendingEmail || !params.email}
                 data-testid="button-email-itinerary"
@@ -280,7 +248,7 @@ export default function ItineraryWorkflow({ onCreateItinerary }: ItineraryWorkfl
               </Button>
             </div>
           </div>
-          
+
           <div className="space-y-4">
             {itinerary.map((day) => (
               <ItineraryDay
@@ -294,12 +262,13 @@ export default function ItineraryWorkflow({ onCreateItinerary }: ItineraryWorkfl
         </div>
       )}
 
+      {/* Refinement Panel */}
       <RefinementPanel
         type="itinerary"
         isOpen={showRefinement}
         onClose={() => setShowRefinement(false)}
         onRefine={handleRefinement}
-        currentSuggestions={itinerary.map(day => day.theme)}
+        currentSuggestions={itinerary.map((d) => d.theme)}
       />
     </div>
   );
