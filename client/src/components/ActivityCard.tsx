@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Clock, MapPin, Users, ExternalLink, Star } from "lucide-react";
 import LinkValidationBadge from "./LinkValidationBadge";
+import MarkdownContent from "./MarkdownContent";
 
 interface ActivityCardProps {
   activity: {
@@ -38,6 +39,9 @@ export default function ActivityCard({ activity, timeSlot, onModifyActivity }: A
     }
   };
 
+  const shouldRenderMarkdown =
+    /(^|\n)#{1,6}\s|(\*\*.+\*\*)|(\[.+\]\(.+\))|(^|\n)-\s/.test(activity.description);
+
   return (
     <Card className="hover-elevate transition-all duration-200">
       <CardHeader className="pb-3">
@@ -52,7 +56,7 @@ export default function ActivityCard({ activity, timeSlot, onModifyActivity }: A
           </div>
           <LinkValidationBadge status={activity.linkStatus} />
         </div>
-        
+
         <div className="flex items-center justify-between">
           <h3 className="font-semibold text-lg">{activity.name}</h3>
           <div className="flex items-center space-x-1">
@@ -61,12 +65,16 @@ export default function ActivityCard({ activity, timeSlot, onModifyActivity }: A
           </div>
         </div>
       </CardHeader>
-      
+
       <CardContent className="space-y-3">
-        <p className="text-sm text-muted-foreground">
-          {activity.description}
-        </p>
-        
+        {shouldRenderMarkdown ? (
+          <div className="text-muted-foreground">
+            <MarkdownContent content={activity.description} />
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">{activity.description}</p>
+        )}
+
         <div className="grid grid-cols-2 gap-3 text-sm">
           <div className="flex items-center space-x-2">
             <Clock className="h-4 w-4 text-muted-foreground" />
@@ -80,26 +88,20 @@ export default function ActivityCard({ activity, timeSlot, onModifyActivity }: A
             <MapPin className="h-4 w-4 text-muted-foreground" />
             <span className="truncate">{activity.location}</span>
           </div>
-          <div className="font-semibold">
-            {activity.cost}
-          </div>
+          <div className="font-semibold">{activity.cost}</div>
         </div>
-        
+
         <div className="flex space-x-2 pt-2">
-          <Button 
-            variant="outline" 
-            size="sm" 
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => onModifyActivity(activity.id)}
             data-testid={`button-modify-${activity.id}`}
           >
             Modify
           </Button>
           {activity.bookingUrl && (
-            <Button 
-              size="sm" 
-              className="flex-1"
-              data-testid={`button-book-${activity.id}`}
-            >
+            <Button size="sm" className="flex-1" data-testid={`button-book-${activity.id}`}>
               <ExternalLink className="h-4 w-4 mr-2" />
               Book Now
             </Button>
