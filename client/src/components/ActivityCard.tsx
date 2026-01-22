@@ -25,7 +25,7 @@ interface ActivityCardProps {
 
 export default function ActivityCard({ activity, timeSlot, onModifyActivity }: ActivityCardProps) {
   const getCategoryColor = (category: string) => {
-    switch (category.toLowerCase()) {
+    switch ((category || "").toLowerCase()) {
       case "outdoor":
         return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
       case "cultural":
@@ -39,9 +39,7 @@ export default function ActivityCard({ activity, timeSlot, onModifyActivity }: A
     }
   };
 
-  const shouldRenderMarkdown =
-    /(^|\n)#{1,6}\s|(\*\*.+\*\*)|(\[.+\]\(.+\))|(^|\n)-\s/.test(activity.description);
-
+  // For now: ALWAYS render as Markdown. (You can add detection later if desired.)
   return (
     <Card className="hover-elevate transition-all duration-200">
       <CardHeader className="pb-3">
@@ -67,13 +65,9 @@ export default function ActivityCard({ activity, timeSlot, onModifyActivity }: A
       </CardHeader>
 
       <CardContent className="space-y-3">
-        {shouldRenderMarkdown ? (
-          <div className="text-muted-foreground">
-            <MarkdownContent content={activity.description} />
-          </div>
-        ) : (
-          <p className="text-sm text-muted-foreground">{activity.description}</p>
-        )}
+        <div className="text-muted-foreground">
+          <MarkdownContent content={activity.description} />
+        </div>
 
         <div className="grid grid-cols-2 gap-3 text-sm">
           <div className="flex items-center space-x-2">
@@ -100,6 +94,7 @@ export default function ActivityCard({ activity, timeSlot, onModifyActivity }: A
           >
             Modify
           </Button>
+
           {activity.bookingUrl && (
             <Button size="sm" className="flex-1" data-testid={`button-book-${activity.id}`}>
               <ExternalLink className="h-4 w-4 mr-2" />
